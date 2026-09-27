@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Borang Pencalonan MPP 2026 | TVETMARA PJ</title>
+<style>
+    :root{
+        --navy:#1B2447;
+        --blue:#4C6FE0;
+        --blue-soft:#eaf0ff;
+        --red:#B7373D;
+        --ink:#222a44;
+        --muted:#6b7391;
+        --line:#e3e8f5;
+        --ok:#1f8a54;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+        font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+        color:var(--ink);
+        min-height:100vh;
+        background:
+        radial-gradient(1200px 500px at 50% -200px, #dbe4ff 0%, transparent 70%),
+        linear-gradient(180deg,#f4f7ff 0%, #eef2fc 100%);
+        padding:28px 16px 60px;
+    }
+    .wave{position:fixed;top:0;left:0;width:100%;z-index:0;opacity:.5;pointer-events:none}
+    .wrap{position:relative;z-index:1;max-width:720px;margin:0 auto}
+
+    .head{text-align:center;margin-bottom:22px}
+    .head img{height:74px;width:auto;margin-bottom:12px}
+    .head h1{color:var(--navy);font-size:1.5rem;letter-spacing:.2px}
+    .head p{color:var(--muted);margin-top:6px;font-size:.95rem}
+    .pill{
+        display:inline-block;margin-top:12px;padding:5px 14px;border-radius:999px;
+        background:var(--blue-soft);color:var(--blue);font-weight:600;font-size:.8rem;
+    }
+
+    .card{
+        background:#fff;border:1px solid var(--line);border-radius:18px;
+        padding:26px 24px;margin-bottom:18px;
+        box-shadow:0 10px 30px rgba(27,36,71,.06);
+    }
+    .sec-title{
+        display:flex;align-items:center;gap:10px;
+        color:var(--navy);font-size:1.05rem;font-weight:700;margin-bottom:16px;
+    }
+    .sec-title .no{
+        display:grid;place-items:center;width:26px;height:26px;border-radius:8px;
+        background:var(--navy);color:#fff;font-size:.85rem;
+    }
+
+    label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
+    label .req{color:var(--red)}
+    .hint{font-size:.78rem;color:var(--muted);font-weight:400;margin-top:4px}
+
+    input,select,textarea{
+        width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+        font-size:.95rem;font-family:inherit;color:var(--ink);background:#fbfcff;
+        transition:border-color .15s,box-shadow .15s;
+    }
+    input:focus,select:focus,textarea:focus{
+        outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(76,111,224,.15);
+    }
+    textarea{resize:vertical;min-height:96px}
+
+    .matrik{display:flex;align-items:stretch}
+    .matrik .prefix{
+        display:grid;place-items:center;padding:0 14px;font-weight:700;color:var(--navy);
+        background:var(--blue-soft);border:1px solid var(--line);border-right:0;
+        border-radius:12px 0 0 12px;
+    }
+    .matrik input{border-radius:0 12px 12px 0}
+
+    .checkline{display:flex;gap:12px;align-items:flex-start;margin-top:6px}
+    .checkline input{width:20px;height:20px;margin-top:2px;flex:0 0 auto}
+    .checkline label{margin:0;font-weight:500;font-size:.9rem;line-height:1.5}
+
+    /* honeypot: sorok dari mata manusia, bot je nampak */
+    .hp{position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden}
+
+    .btn{
+        width:100%;padding:15px;border:0;border-radius:12px;cursor:pointer;
+        background:var(--navy);color:#fff;font-size:1rem;font-weight:700;
+        transition:transform .05s,opacity .15s;
+    }
+    .btn:hover{opacity:.93}
+    .btn:active{transform:translateY(1px)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .msg{margin-top:14px;padding:13px 15px;border-radius:12px;font-size:.9rem;display:none}
+    .msg.show{display:block}
+    .msg.ok{background:#e7f6ee;color:var(--ok);border:1px solid #bfe6cf}
+    .msg.err{background:#fdeaea;color:var(--red);border:1px solid #f3c9c9}
+
+    footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:26px}
+</style>
+</head>
+<body>
+
+<!-- wavy deco kat atas -->
+<svg class="wave" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#4C6FE0" fill-opacity="0.18" d="M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,101.3C672,96,768,128,864,133.3C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,0L0,0Z"></path>
+</svg>
+
+<div class="wrap">
+    <div class="head">
+        <!-- LOGO: letak fail logo.png dalam repo, atau reuse URL dari repo Survey-Sukan kau -->
+        <img src="logo.png" alt="TVETMARA Petaling Jaya" onerror="this.style.display='none'" />
+        <h1>Borang Pencalonan MPP 2026</h1>
+        <p>Majlis Perwakilan Pelajar | KKTM / TVETMARA Petaling Jaya</p>
+        <span class="pill">Pilihan Raya MPP Sesi 2026</span>
+    </div>
+
+    <form id="form" novalidate>
+
+    <!-- BAHAGIAN A -->
+    <div class="card">
+        <div class="sec-title"><span class="no">A</span> Maklumat Calon</div>
+
+        <label>Nama Penuh <span class="req">*</span></label>
+        <input type="text" name="nama" maxlength="140" required placeholder="Nama penuh seperti dalam kad matrik" />
+
+        <label>No. Matrik <span class="req">*</span></label>
+        <div class="matrik">
+            <span class="prefix">DFI</span>
+            <input type="text" name="matrik" inputmode="numeric" maxlength="12" required
+                placeholder="2501014" oninput="this.value=this.value.replace(/\D/g,'')" />
+        </div>
+        <div class="hint">Digit sahaja, prefix DFI dah auto.</div>
+
+        <label>Kelas / Program <span class="req">*</span></label>
+        <input type="text" name="kelas" maxlength="60" required placeholder="cth: DFI 4A / Dip. Kej. Elektronik (IoT)" />
+
+        <label>Semester <span class="req">*</span></label>
+        <select name="semester" required>
+            <option value="" disabled selected>Pilih semester</option>
+            <option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option>
+        </select>
+
+        <label>No. Telefon <span class="req">*</span></label>
+        <input type="tel" name="telefon" inputmode="numeric" maxlength="15" required
+                placeholder="cth: 0123456789" oninput="this.value=this.value.replace(/[^\d]/g,'')" />
+        </div>
+
+        <!-- BAHAGIAN B -->
+        <div class="card">
+        <div class="sec-title"><span class="no">B</span> Jawatan Dipertandingkan</div>
+
+        <label>Jawatan <span class="req">*</span></label>
+        <select name="jawatan" required>
+            <option value="" disabled selected>Pilih jawatan</option>
+            <option>Presiden</option>
+            <option>Timbalan Presiden</option>
+            <option>Setiausaha 1</option>
+            <option>Setiausaha 2</option>
+            <option>Bendahari</option>
+            <option>Exco Kerohanian</option>
+            <option>Exco Akademik</option>
+            <option>Exco Sukan</option>
+            <option>Exco Disiplin</option>
+            <option>Exco Kebudayaan</option>
+            <option>Exco Kebajikan</option>
+            <option>Exco Usahawan</option>
+            <option>Exco Media</option>
+            <option>Exco Teknikal</option>
+        </select>
+        <div class="hint">Satu jawatan sahaja bagi setiap pencalonan.</div>
+        </div>
+
+        <!-- BAHAGIAN D -->
+        <div class="card">
+        <div class="sec-title"><span class="no">D</span> Maklumat Tambahan</div>
+
+        <label>Pengalaman</label>
+        <textarea name="pengalaman" maxlength="1500"
+            placeholder="Pengalaman organisasi, kepimpinan, kelab, program yang pernah disertai..."></textarea>
+
+        <label>Kenapa anda nak jadi MPP?</label>
+        <textarea name="motivasi" maxlength="1500"
+            placeholder="Motivasi anda + apa yang anda nak bawa / perjuangkan jika terpilih..."></textarea>
+        </div>
+
+        <!-- PENGAKUAN -->
+        <div class="card">
+        <div class="checkline">
+            <input type="checkbox" id="akui" name="pengakuan" required />
+            <label for="akui">
+            Saya mengesahkan bahawa segala maklumat di atas adalah benar, dan saya bersedia
+            mematuhi segala syarat dan peraturan Pilihan Raya MPP TVETMARA PJ Sesi 2026.
+            </label>
+        </div>
+        </div>
+
+        <!-- honeypot: manusia takkan nampak / isi ni -->
+        <div class="hp" aria-hidden="true">
+        <label>Jangan isi ruangan ini</label>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button type="submit" class="btn" id="btn">Hantar Pencalonan</button>
+        <div class="msg" id="msg"></div>
+    </form>
+
+    <footer>Sistem borang oleh MPP TVETMARA PJ &middot; 2026</footer>
+    </div>
+
+    <script type="module">
+    // ESM CDN import, jalan terus dalam browser tanpa bundler
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp }
+        from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDsx7Q8hL0KuILO20fD1Q6L2w2MtsbF92E",
+        authDomain: "mpp-tvetpj-2026.firebaseapp.com",
+        projectId: "mpp-tvetpj-2026",
+        storageBucket: "mpp-tvetpj-2026.firebasestorage.app",
+        messagingSenderId: "347884056492",
+        appId: "1:347884056492:web:2b0d8239c0db88f7735409"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    const form = document.getElementById("form");
+    const btn  = document.getElementById("btn");
+    const msg  = document.getElementById("msg");
+
+    function show(type, text){
+        msg.className = "msg show " + type;
+        msg.textContent = text;
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // 1) honeypot check, kalau terisi = bot, senyap2 buang
+        if (form.website.value.trim() !== ""){
+        show("ok", "Pencalonan diterima. Terima kasih!"); // fake success, biar bot ingat berjaya
+        return;
+        }
+
+        // 2) validation asas kat browser dulu (UX), rules Firestore jadi lapis kedua
+        if (!form.checkValidity()){
+        show("err", "Sila lengkapkan semua ruangan bertanda *.");
+        form.reportValidity();
+        return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Menghantar...";
+
+        try {
+        await addDoc(collection(db, "pencalonan"), {
+            nama:       form.nama.value.trim(),
+            matrik:     "DFI" + form.matrik.value.trim(),
+            kelas:      form.kelas.value.trim(),
+            semester:   form.semester.value,
+            telefon:    form.telefon.value.trim(),
+            jawatan:    form.jawatan.value,
+            pengalaman: form.pengalaman.value.trim(),
+            motivasi:   form.motivasi.value.trim(),
+            pengakuan:  true,
+            createdAt:  serverTimestamp()
+        });
+
+        show("ok", "Pencalonan anda berjaya dihantar! Terima kasih dan semoga berjaya. 🎉");
+        form.reset();
+        } catch (err){
+        console.error(err);
+        show("err", "Maaf, penghantaran gagal. Sila cuba semula atau hubungi urus setia MPP.");
+        } finally {
+        btn.disabled = false;
+        btn.textContent = "Hantar Pencalonan";
+        }
+    });
+</script>
+</body>
+</html>
