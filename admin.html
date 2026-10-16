@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin | Pencalonan MPP 2026</title>
+<title>Admin | Pendaftaran MPP 2026</title>
 <style>
   :root{
     --navy:#1B2447;--blue:#4C6FE0;--blue-soft:#eaf0ff;--red:#B7373D;
@@ -40,7 +40,7 @@
   .err{color:var(--red);font-size:.85rem;margin-top:10px;min-height:18px}
 
   /* ===== DASHBOARD ===== */
-  .dash{display:none;max-width:1200px;margin:0 auto;padding:22px 16px 60px}
+  .dash{display:none;max-width:1000px;margin:0 auto;padding:22px 16px 60px}
   .topbar{
     display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
     background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:16px;
@@ -61,21 +61,19 @@
   .stat .l{font-size:.78rem;color:var(--muted);margin-top:2px}
 
   .filter{margin-bottom:14px}
-  .filter select{
-    padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;
-    font-size:.88rem;font-family:inherit;color:var(--ink);
+  .filter input{
+    width:100%;max-width:340px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;
+    background:#fff;font-size:.88rem;font-family:inherit;color:var(--ink);
   }
+  .filter input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(76,111,224,.15)}
 
   .table-wrap{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:auto;
     box-shadow:0 6px 20px rgba(27,36,71,.05)}
-  table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:900px}
+  table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:620px}
   th{background:var(--navy);color:#fff;text-align:left;padding:12px 14px;font-weight:600;white-space:nowrap}
   td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
   tr:last-child td{border-bottom:0}
   tr:hover td{background:#f8faff}
-  .badge{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--blue-soft);
-    color:var(--blue);font-weight:600;font-size:.75rem;white-space:nowrap}
-  .long{max-width:260px;font-size:.8rem;color:var(--muted)}
   .empty{text-align:center;padding:40px;color:var(--muted)}
   .loading{text-align:center;padding:40px;color:var(--muted)}
 </style>
@@ -85,9 +83,9 @@
 <!-- ===== LOGIN VIEW ===== -->
 <div class="login-wrap" id="loginView">
   <div class="login-card">
-    <img src="logo.png" alt="TVETMARA PJ" onerror="this.style.display='none'" />
+    <img src="tvetmara-pjpng.png" alt="TVETMARA PJ" onerror="this.style.display='none'" />
     <h1>Panel Admin MPP</h1>
-    <p>Log masuk untuk lihat senarai pencalonan</p>
+    <p>Log masuk untuk lihat senarai pendaftaran</p>
     <form id="loginForm">
       <input type="email" id="email" placeholder="Email admin" required />
       <input type="password" id="pass" placeholder="Kata laluan" required />
@@ -103,7 +101,7 @@
     <div class="left">
       <img src="tvetmara-pjpng.png" alt="" onerror="this.style.display='none'" />
       <div>
-        <h2>Senarai Pencalonan MPP 2026</h2>
+        <h2>Senarai Pendaftaran MPP 2026</h2>
         <div class="sub" id="whoami"></div>
       </div>
     </div>
@@ -114,24 +112,23 @@
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Jumlah Calon</div></div>
-    <div class="stat"><div class="n" id="statJawatan">0</div><div class="l">Jawatan Ada Calon</div></div>
+    <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Jumlah Pendaftar</div></div>
+    <div class="stat"><div class="n" id="statKelas">0</div><div class="l">Bilangan Kelas</div></div>
   </div>
 
   <div class="filter">
-    <select id="filterJawatan"><option value="">Semua Jawatan</option></select>
+    <input type="text" id="search" placeholder="Cari nama atau matrik..." />
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>#</th><th>Nama</th><th>Matrik</th><th>Kelas</th><th>Sem</th>
-          <th>Telefon</th><th>Jawatan</th><th>Pengalaman</th><th>Motivasi</th><th>Tarikh</th>
+          <th>#</th><th>Nama</th><th>Matrik</th><th>Kelas</th><th>Telefon</th><th>Tarikh</th>
         </tr>
       </thead>
       <tbody id="tbody">
-        <tr><td colspan="10" class="loading">Memuatkan data...</td></tr>
+        <tr><td colspan="6" class="loading">Memuatkan data...</td></tr>
       </tbody>
     </table>
   </div>
@@ -163,7 +160,7 @@
   const loginBtn  = document.getElementById("loginBtn");
   const loginErr  = document.getElementById("loginErr");
 
-  let rows = [];   // simpan data mentah utk filter + export
+  let rows = [];   // simpan data mentah utk search + export
 
   // ===== AUTH STATE: auto tukar view ikut login status =====
   onAuthStateChanged(auth, (user) => {
@@ -207,34 +204,31 @@
       const q = query(collection(db, "pencalonan"), orderBy("createdAt", "desc"));
       const snap = await getDocs(q);
       rows = snap.docs.map(d => d.data());
-      buildFilter();
       render(rows);
       document.getElementById("statTotal").textContent = rows.length;
-      document.getElementById("statJawatan").textContent =
-        new Set(rows.map(r => r.jawatan)).size;
+      document.getElementById("statKelas").textContent =
+        new Set(rows.map(r => (r.kelas || "").trim()).filter(Boolean)).size;
     } catch (err){
       console.error(err);
-      tbody.innerHTML = '<tr><td colspan="10" class="empty">Gagal muat data. Cek rules / connection.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">Gagal muat data. Cek rules / connection.</td></tr>';
     }
   }
 
-  // ===== isi dropdown filter ikut jawatan yang ada =====
-  function buildFilter(){
-    const sel = document.getElementById("filterJawatan");
-    const list = [...new Set(rows.map(r => r.jawatan))].sort();
-    sel.innerHTML = '<option value="">Semua Jawatan</option>' +
-      list.map(j => `<option value="${esc(j)}">${esc(j)}</option>`).join("");
-    sel.onchange = () => {
-      const v = sel.value;
-      render(v ? rows.filter(r => r.jawatan === v) : rows);
-    };
-  }
+  // ===== SEARCH ikut nama / matrik =====
+  document.getElementById("search").addEventListener("input", (e) => {
+    const t = e.target.value.trim().toLowerCase();
+    if (!t) return render(rows);
+    render(rows.filter(r =>
+      (r.nama   || "").toLowerCase().includes(t) ||
+      (r.matrik || "").toLowerCase().includes(t)
+    ));
+  });
 
   // ===== render table =====
   function render(data){
     const tbody = document.getElementById("tbody");
     if (!data.length){
-      tbody.innerHTML = '<tr><td colspan="10" class="empty">Tiada rekod.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">Tiada rekod.</td></tr>';
       return;
     }
     tbody.innerHTML = data.map((r,i) => `
@@ -243,11 +237,7 @@
         <td>${esc(r.nama)}</td>
         <td>${esc(r.matrik)}</td>
         <td>${esc(r.kelas)}</td>
-        <td>${esc(r.semester)}</td>
         <td>${esc(r.telefon)}</td>
-        <td><span class="badge">${esc(r.jawatan)}</span></td>
-        <td class="long">${esc(r.pengalaman) || "-"}</td>
-        <td class="long">${esc(r.motivasi) || "-"}</td>
         <td>${fmtDate(r.createdAt)}</td>
       </tr>`).join("");
   }
@@ -255,12 +245,11 @@
   // ===== EXPORT CSV =====
   document.getElementById("csvBtn").addEventListener("click", () => {
     if (!rows.length) return alert("Tiada data untuk di-export.");
-    const headers = ["Nama","Matrik","Kelas","Semester","Telefon","Jawatan","Pengalaman","Motivasi","Tarikh"];
+    const headers = ["Nama","Matrik","Kelas","Telefon","Tarikh"];
     const lines = [headers.map(csvCell).join(",")];
     rows.forEach(r => {
       lines.push([
-        r.nama, r.matrik, r.kelas, r.semester, r.telefon,
-        r.jawatan, r.pengalaman, r.motivasi, fmtDate(r.createdAt)
+        r.nama, r.matrik, r.kelas, r.telefon, fmtDate(r.createdAt)
       ].map(csvCell).join(","));
     });
     // \uFEFF = BOM, supaya Excel baca huruf melayu / simbol elok
@@ -268,7 +257,7 @@
     const url  = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "pencalonan-mpp-2026.csv";
+    a.download = "pendaftaran-mpp-2026.csv";
     a.click();
     URL.revokeObjectURL(url);
   });
